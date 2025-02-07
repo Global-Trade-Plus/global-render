@@ -67,28 +67,8 @@ router.post('/kyc', async (req, res) => {
 });
 
 // Generic endpoint to handle 'kyc2' and 'kyc3' logic
-router.post('/kyc/:type', async (req, res) => {
-  try {
-    const { type } = req.params;
-    const imageUrlKey = `imageUrl${type.slice(-1)}`; // Determines if it's kyc2 or kyc3
-    const imageUrl = req.body[imageUrlKey];
 
-    if (!imageUrl) {
-      return res.status(400).json({ error: 'Invalid image URL' });
-    }
-
-    // Create a new document in the 'images' collection
-    const image = new Image({ imageUrl });
-    await image.save();
-
-    res.status(201).json({ message: `Image URL ${imageUrlKey} stored successfully` });
-  } catch (error) {
-    console.error('Error storing image URL:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
-
-// Endpoint for fetching images
+// Endpoint for fetching traders
 router.get('/trader/fetch-trader', async (req, res) => {
   try {
     const trader = await Trader.find();
@@ -98,5 +78,19 @@ router.get('/trader/fetch-trader', async (req, res) => {
     res.status(500).send('Internal Server Error');
   }
 });
+
+router.get("/trader/fetch-trader/:id", async function (req, res, next) {
+    const { id } = req.params;
+  
+    const user = await Trader.findOne({ _id:id  });
+  
+    if (!user) {
+      res.status(404).json({ message: "user not found" });
+      return;
+    }
+  
+    res.status(200).json({ code: "Ok", data: user });
+  });
+  
 
 module.exports = router;
