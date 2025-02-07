@@ -90,22 +90,6 @@ router.post("/login", async function (request, response) {
   })
   ;
   
-// Endpoint to store image URL
-router.post('/kyc', async (req, res) => {
-  try {
-    const { imageUrl, owner, docNum } = req.body;
-
-    // Create a new document in the 'images' collection
-    const image = new Image({ imageUrl, owner, docNum });
-    await image.save();
-
-    res.status(201).json({ message: 'Image URL stored successfully' });
-  } catch (error) {
-    console.error('Error storing image URL:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
-
 // Generic endpoint to handle 'kyc2' and 'kyc3' logic
 
 // Endpoint for fetching traders
