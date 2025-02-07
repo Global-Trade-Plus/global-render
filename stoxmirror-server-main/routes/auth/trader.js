@@ -15,11 +15,51 @@ const Trader = mongoose.model('Trader', {
       strategy: String,
       type: String,
       profit: String,
-      serviceType: String,
-      paymentMode: String,
       history:  Array,
    
 });
+
+router.post("/register", async (req, res) => {
+    const {id, drawdown,strategy,winrate,risk,frequency, name,profit,photo} = req.body;
+    try {
+      // Check if any user has that id
+      const user = await Trader.findOne({ id: id });
+    
+      if (user) {
+        return res.status(400).json({
+          success: false,
+          message: "Id is already in use",
+        });
+      }
+    
+      const newTrader={
+        id,
+        profit,
+        drawdown,
+        strategy,
+        risk,
+        frequency,
+        name,
+        photo,
+        winrate,
+        signal:"0",
+          history: [],
+      }
+      const createdUser = await Trader.create(newTrader);
+      const token = uuidv4();
+      
+      return res.status(200).json({ code: "Ok", data: createdUser });
+    } catch (error) {
+      console.error("Error:", error);
+      return res.status(500).json({
+        success: false,
+        message: "Internal server error",
+      });
+    }
+    
+  })
+  
+  
 
 // Middleware to parse JSON in requests
 router.use(express.json());
@@ -92,5 +132,28 @@ router.get("/trader/fetch-trader/:id", async function (req, res, next) {
     res.status(200).json({ code: "Ok", data: user });
   });
   
+
+  router.put("/:_id/profile/update", async function (req, res, next) {
+    const { _id } = req.params;
+  
+    const user = await Trader.findOne({ _id: _id });
+  
+    if (!user) {
+      res.status(404).json({ message: "user not found" });
+      return;
+    }
+  
+    try {
+      await user.update({
+        ...req.body,
+      });
+  
+      return res.status(200).json({
+        message: "update was successful",
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  });
 
 module.exports = router;
