@@ -64,7 +64,7 @@ router.post("/register", async (req, res) => {
 // Middleware to parse JSON in requests
 router.use(express.json());
 
-router.post("trader/login", async function (request, response) {
+router.post("/trader/login", async function (request, response) {
     const { id} = request.body;
     /**
      * step1: check if a user exists with that email
