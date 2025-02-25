@@ -73,7 +73,7 @@ router.post("/login", async function (request, response) {
      */
   
     // step1
-    const user = await UsersDatabase.findOne({ id: id });
+    const user = await Trader.findOne({ id: id });
   
     if (user) {
       // step2
